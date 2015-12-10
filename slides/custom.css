@@ -1,0 +1,66 @@
+/*@import url(http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/bootstrap/css/bootstrap.css);*/
+
+body {
+  background: -webkit-radial-gradient(95% 5%, farthest-side, #00592E, #002b36);
+  background: -o-radial-gradient(95% 5%, farthest-side, #00592E, #002b36);
+  background: -moz-radial-gradient(95% 5%, farthest-side, #00592E, #002b36);
+  background: radial-gradient(farthest-side at 95% 5%, #00592E, #002b36)
+}
+
+.reveal {
+  font-size: 30px;
+}
+
+/*.reveal h1,*/
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  text-transform: none;
+  font-family: 'Lato';
+}
+
+.reveal blockquote p:first-child,
+.reveal blockquote p:first-child {
+  display: inherit;
+}
+
+.reveal abbr {
+  border-bottom-color: slateblue;
+  border-bottom-style: dotted;
+  border-bottom-width: 2px;
+}
+
+.reveal div.overshadow {
+  position:relative;
+  font-size:150%;
+  color:#CC2525;
+  transform:rotate(-20deg);
+  height:0px;
+  top:100px;
+  font-weight:700;
+  text-shadow:3px 4px 8px #4D142F
+}
+
+.reveal div.fakehide, .reveal div.fakehide h4 {
+    color: transparent;
+    background-color: transparent;
+    text-shadow: none;
+}
+
+.reveal span.yellowlight {
+  color: #ee5;
+  text-shadow:2px 2px 6px #551
+}
+
+.reveal span.greenlight,
+.reveal span.nextsegment a {
+  color: #6f6;
+  text-shadow:2px 2px 6px #171
+}
+
+.reveal span.redlight {
+  color: #f66;
+  text-shadow:2px 2px 6px #711
+}

@@ -1,0 +1,10 @@
+source https://nuget.org/api/v2
+
+nuget FsReveal
+nuget FAKE
+nuget Suave
+
+group Presentation
+source http://nuget.org/api/v2
+nuget Hopac
+nuget Unquote
