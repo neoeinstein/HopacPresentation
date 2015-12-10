@@ -1,0 +1,324 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Hopac - Remainders</title>
+    <meta name="description" content="Introduction to Hopac and Synchronous Rendezvous">
+    <meta name="author" content="Marcus Griep">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/Moon.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://localhost:8083/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        <div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">namespace System.Threading</div>
+<div class="tip" id="fs3">namespace System.Collections</div>
+<div class="tip" id="fs4">namespace System.Collections.Generic</div>
+<div class="tip" id="fs5">namespace Hopac</div>
+<div class="tip" id="fs6">module Infixes<br /><br />from Hopac</div>
+<div class="tip" id="fs7">val ivar : IVar&lt;int&gt;<br /><br />Full name: Remainder.ivar</div>
+<div class="tip" id="fs8">Multiple items<br />type IVar&lt;&#39;T&gt; =<br />&#160;&#160;inherit Promise&lt;&#39;T&gt;<br />&#160;&#160;new : unit -&gt; IVar&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;nested type Fill<br />&#160;&#160;nested type FillFailure<br />&#160;&#160;nested type TryFill<br /><br />Full name: Hopac.IVar&lt;_&gt;<br /><br />--------------------<br />IVar() : unit<br />IVar(t: &#39;T) : unit<br />IVar(e: exn) : unit</div>
+<div class="tip" id="fs9">val queue : Job&lt;unit&gt; -&gt; unit<br /><br />Full name: Hopac.TopLevel.queue</div>
+<div class="tip" id="fs10">val read : IVar&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.IVar.read</div>
+<div class="tip" id="fs11">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs12">val run : Job&lt;&#39;x&gt; -&gt; &#39;x<br /><br />Full name: Hopac.TopLevel.run</div>
+<div class="tip" id="fs13">val fill : IVar&lt;&#39;x&gt; -&gt; &#39;x -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.IVar.fill</div>
+<div class="tip" id="fs14">val mvar : MVar&lt;int&gt;<br /><br />Full name: Remainder.mvar</div>
+<div class="tip" id="fs15">Multiple items<br />type MVar&lt;&#39;T&gt; =<br />&#160;&#160;inherit Alt&lt;&#39;T&gt;<br />&#160;&#160;new : unit -&gt; MVar&lt;&#39;T&gt; + 1 overload<br /><br />Full name: Hopac.MVar&lt;_&gt;<br /><br />--------------------<br />MVar() : unit<br />MVar(x: &#39;T) : unit</div>
+<div class="tip" id="fs16">val fill : MVar&lt;&#39;x&gt; -&gt; &#39;x -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.MVar.fill</div>
+<div class="tip" id="fs17">val take : MVar&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.MVar.take</div>
+<div class="tip" id="fs18">val i : int</div>
+<div class="tip" id="fs19">val read : MVar&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.MVar.read</div>
+<div class="tip" id="fs20">val mbx : Mailbox&lt;string&gt;<br /><br />Full name: Remainder.mbx</div>
+<div class="tip" id="fs21">Multiple items<br />type Mailbox&lt;&#39;T&gt; =<br />&#160;&#160;inherit Alt&lt;&#39;T&gt;<br />&#160;&#160;new : unit -&gt; Mailbox&lt;&#39;T&gt;<br /><br />Full name: Hopac.Mailbox&lt;_&gt;<br /><br />--------------------<br />Mailbox() : unit</div>
+<div class="tip" id="fs22">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs23">module Global<br /><br />from Hopac.Mailbox</div>
+<div class="tip" id="fs24">val send : Mailbox&lt;&#39;x&gt; -&gt; &#39;x -&gt; unit<br /><br />Full name: Hopac.Mailbox.Global.send</div>
+<div class="tip" id="fs25">val boundedMb : BoundedMb&lt;string&gt;<br /><br />Full name: Remainder.boundedMb</div>
+<div class="tip" id="fs26">Multiple items<br />module BoundedMb<br /><br />from Hopac<br /><br />--------------------<br />type BoundedMb&lt;&#39;x&gt;<br /><br />Full name: Hopac.BoundedMb&lt;_&gt;</div>
+<div class="tip" id="fs27">val create : capacity:int -&gt; Job&lt;BoundedMb&lt;&#39;x&gt;&gt;<br /><br />Full name: Hopac.BoundedMb.create</div>
+<div class="tip" id="fs28">val put : BoundedMb&lt;&#39;x&gt; -&gt; &#39;x -&gt; Alt&lt;unit&gt;<br /><br />Full name: Hopac.BoundedMb.put</div>
+<div class="tip" id="fs29">val property : Stream.Property&lt;string&gt;<br /><br />Full name: Remainder.property</div>
+<div class="tip" id="fs30">Multiple items<br />module Stream<br /><br />from Hopac<br /><br />--------------------<br />type Stream&lt;&#39;x&gt; = Stream.Stream&lt;&#39;x&gt;<br /><br />Full name: Hopac.TopLevel.Stream&lt;_&gt;</div>
+<div class="tip" id="fs31">Multiple items<br />type Property&lt;&#39;x&gt; =<br />&#160;&#160;interface INotifyPropertyChanged<br />&#160;&#160;new : &#39;x -&gt; Property&lt;&#39;x&gt;<br />&#160;&#160;member Tap : unit -&gt; Stream&lt;&#39;x&gt;<br />&#160;&#160;member Value : &#39;x<br />&#160;&#160;member Value : &#39;x with set<br /><br />Full name: Hopac.Stream.Property&lt;_&gt;<br /><br />--------------------<br />new : &#39;x -&gt; Stream.Property&lt;&#39;x&gt;</div>
+<div class="tip" id="fs32">val propStream : Stream.Stream&lt;string&gt;<br /><br />Full name: Remainder.propStream</div>
+<div class="tip" id="fs33">member Stream.Property.Tap : unit -&gt; Stream.Stream&lt;&#39;x&gt;</div>
+<div class="tip" id="fs34">val consumeFun : (&#39;x -&gt; unit) -&gt; Stream.Stream&lt;&#39;x&gt; -&gt; unit<br /><br />Full name: Hopac.Stream.consumeFun</div>
+<div class="tip" id="fs35">property Stream.Property.Value: string</div>
+<div class="tip" id="fs36">val evtSrc : Stream.Src&lt;string&gt;<br /><br />Full name: Remainder.evtSrc</div>
+<div class="tip" id="fs37">Multiple items<br />module Src<br /><br />from Hopac.Stream<br /><br />--------------------<br />type Src&lt;&#39;x&gt;<br /><br />Full name: Hopac.Stream.Src&lt;_&gt;</div>
+<div class="tip" id="fs38">val create : unit -&gt; Stream.Src&lt;&#39;x&gt;<br /><br />Full name: Hopac.Stream.Src.create</div>
+<div class="tip" id="fs39">val srcStream : Stream.Stream&lt;string&gt;<br /><br />Full name: Remainder.srcStream</div>
+<div class="tip" id="fs40">val tap : Stream.Src&lt;&#39;x&gt; -&gt; Stream.Stream&lt;&#39;x&gt;<br /><br />Full name: Hopac.Stream.Src.tap</div>
+<div class="tip" id="fs41">val value : Stream.Src&lt;&#39;x&gt; -&gt; &#39;x -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Stream.Src.value</div>
+<div class="tip" id="fs42">val close : Stream.Src&lt;&#39;x&gt; -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Stream.Src.close</div>
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+
+<section >
+
+<h3>IVar</h3>
+
+<h4>Write-once variable</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="i">ivar</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="t">IVar</span> ()
+<span onmouseout="hideTip(event, 'fs9', 12)" onmouseover="showTip(event, 'fs9', 12)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="t">IVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="f">read</span> <span onmouseout="hideTip(event, 'fs7', 15)" onmouseover="showTip(event, 'fs7', 15)" class="i">ivar</span> <span class="o">^-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 16)" onmouseover="showTip(event, 'fs11', 16)" class="f">printfn</span> <span class="s">&quot;Read from IVar </span><span class="pf">%i</span><span class="s">&quot;</span>
+<span onmouseout="hideTip(event, 'fs9', 17)" onmouseover="showTip(event, 'fs9', 17)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs8', 18)" onmouseover="showTip(event, 'fs8', 18)" class="t">IVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 19)" onmouseover="showTip(event, 'fs10', 19)" class="f">read</span> <span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="i">ivar</span> <span class="o">^-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="f">printfn</span> <span class="s">&quot;Read from IVar </span><span class="pf">%i</span><span class="s">&quot;</span>
+<span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="t">IVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 24)" onmouseover="showTip(event, 'fs10', 24)" class="f">read</span> <span onmouseout="hideTip(event, 'fs7', 25)" onmouseover="showTip(event, 'fs7', 25)" class="i">ivar</span> <span class="o">^-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="f">printfn</span> <span class="s">&quot;Read from IVar </span><span class="pf">%i</span><span class="s">&quot;</span>
+<span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs8', 28)" onmouseover="showTip(event, 'fs8', 28)" class="t">IVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="f">fill</span> <span onmouseout="hideTip(event, 'fs7', 30)" onmouseover="showTip(event, 'fs7', 30)" class="i">ivar</span> <span class="n">5</span>
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>Read from IVar 5
+Read from IVar 5
+Read from IVar 5</code></pre></td></tr></table>
+
+<p>Reads block until filled; Once filled, all reads proceed</p>
+
+<p><em>Optimized as a lightweight substitute for a reply channel</em></p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Remainders" transition="dissolve">
+
+<h3>MVar</h3>
+
+<h4>Serialized access variable</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 31)" onmouseover="showTip(event, 'fs14', 31)" class="i">mvar</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 32)" onmouseover="showTip(event, 'fs15', 32)" class="t">MVar</span> ()
+<span onmouseout="hideTip(event, 'fs12', 33)" onmouseover="showTip(event, 'fs12', 33)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs15', 34)" onmouseover="showTip(event, 'fs15', 34)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 35)" onmouseover="showTip(event, 'fs16', 35)" class="f">fill</span> <span onmouseout="hideTip(event, 'fs14', 36)" onmouseover="showTip(event, 'fs14', 36)" class="i">mvar</span> <span class="n">5</span>
+<span onmouseout="hideTip(event, 'fs12', 37)" onmouseover="showTip(event, 'fs12', 37)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 39)" onmouseover="showTip(event, 'fs17', 39)" class="f">take</span> <span onmouseout="hideTip(event, 'fs14', 40)" onmouseover="showTip(event, 'fs14', 40)" class="i">mvar</span> <span class="o">^-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="f">printfn</span> <span class="s">&quot;Read from MVar </span><span class="pf">%i</span><span class="s">&quot;</span>
+<span onmouseout="hideTip(event, 'fs9', 42)" onmouseover="showTip(event, 'fs9', 42)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs15', 43)" onmouseover="showTip(event, 'fs15', 43)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 44)" onmouseover="showTip(event, 'fs17', 44)" class="f">take</span> <span onmouseout="hideTip(event, 'fs14', 45)" onmouseover="showTip(event, 'fs14', 45)" class="i">mvar</span> <span class="o">^=&gt;</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs18', 46)" onmouseover="showTip(event, 'fs18', 46)" class="i">i</span> <span class="k">-&gt;</span>
+  <span onmouseout="hideTip(event, 'fs11', 47)" onmouseover="showTip(event, 'fs11', 47)" class="f">printfn</span> <span class="s">&quot;Read from MVar </span><span class="pf">%i</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="i">i</span> ; <span onmouseout="hideTip(event, 'fs15', 49)" onmouseover="showTip(event, 'fs15', 49)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 50)" onmouseover="showTip(event, 'fs16', 50)" class="f">fill</span> <span onmouseout="hideTip(event, 'fs14', 51)" onmouseover="showTip(event, 'fs14', 51)" class="i">mvar</span> <span onmouseout="hideTip(event, 'fs18', 52)" onmouseover="showTip(event, 'fs18', 52)" class="i">i</span>)
+<span onmouseout="hideTip(event, 'fs9', 53)" onmouseover="showTip(event, 'fs9', 53)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 55)" onmouseover="showTip(event, 'fs19', 55)" class="f">read</span> <span onmouseout="hideTip(event, 'fs14', 56)" onmouseover="showTip(event, 'fs14', 56)" class="i">mvar</span> <span class="o">^-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 57)" onmouseover="showTip(event, 'fs11', 57)" class="f">printfn</span> <span class="s">&quot;Read from MVar </span><span class="pf">%i</span><span class="s">&quot;</span>
+<span onmouseout="hideTip(event, 'fs12', 58)" onmouseover="showTip(event, 'fs12', 58)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs15', 59)" onmouseover="showTip(event, 'fs15', 59)" class="t">MVar</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 60)" onmouseover="showTip(event, 'fs16', 60)" class="f">fill</span> <span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="i">mvar</span> <span class="n">13</span>
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>Read from MVar 5
+Read from MVar 13
+Read from MVar 13</code></pre></td></tr></table>
+
+<p>Takes block until filled; Once filled, first take empties</p>
+
+<p><code>read</code> is a composition of <code>take</code> and <code>fill</code></p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Remainders" transition="dissolve">
+
+<h3>Mailbox</h3>
+
+<h4>Unbounded buffer</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 62)" onmouseover="showTip(event, 'fs20', 62)" class="i">mbx</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 63)" onmouseover="showTip(event, 'fs21', 63)" class="t">Mailbox</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs22', 64)" onmouseover="showTip(event, 'fs22', 64)" class="t">string</span><span class="o">&gt;</span>()
+<span onmouseout="hideTip(event, 'fs21', 65)" onmouseover="showTip(event, 'fs21', 65)" class="t">Mailbox</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 66)" onmouseover="showTip(event, 'fs23', 66)" class="t">Global</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 67)" onmouseover="showTip(event, 'fs24', 67)" class="f">send</span> <span onmouseout="hideTip(event, 'fs20', 68)" onmouseover="showTip(event, 'fs20', 68)" class="i">mbx</span> <span class="s">&quot;message&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+
+<p>An asynchronous, unbounded buffer mailbox.</p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Remainders" transition="dissolve">
+
+<h3>BoundedMb</h3>
+
+<h4>Bounded buffer</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 69)" onmouseover="showTip(event, 'fs25', 69)" class="i">boundedMb</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 70)" onmouseover="showTip(event, 'fs12', 70)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs26', 71)" onmouseover="showTip(event, 'fs26', 71)" class="t">BoundedMb</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 72)" onmouseover="showTip(event, 'fs27', 72)" class="f">create</span> <span class="n">100</span>
+<span onmouseout="hideTip(event, 'fs12', 73)" onmouseover="showTip(event, 'fs12', 73)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs26', 74)" onmouseover="showTip(event, 'fs26', 74)" class="t">BoundedMb</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 75)" onmouseover="showTip(event, 'fs28', 75)" class="f">put</span> <span onmouseout="hideTip(event, 'fs25', 76)" onmouseover="showTip(event, 'fs25', 76)" class="i">boundedMb</span> <span class="s">&quot;message&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+
+<p>A synchronous, bounded mailbox for many to many communication.</p>
+
+<p>Useful for coordinating work; Provide slack for producer/consumer;
+Back-pressure blocking producers if full</p>
+
+<p>If buffering not necessary, use a channel. If unbounded buffering is ok, prefer a mailbox.</p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Remainders" transition="dissolve">
+
+<h3>Stream</h3>
+
+<h4>Choice stream</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 77)" onmouseover="showTip(event, 'fs29', 77)" class="i">property</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 78)" onmouseover="showTip(event, 'fs30', 78)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 79)" onmouseover="showTip(event, 'fs31', 79)" class="t">Property</span>(<span class="s">&quot;first&quot;</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 80)" onmouseover="showTip(event, 'fs32', 80)" class="i">propStream</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 81)" onmouseover="showTip(event, 'fs29', 81)" class="i">property</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 82)" onmouseover="showTip(event, 'fs33', 82)" class="f">Tap</span> ()
+<span onmouseout="hideTip(event, 'fs30', 83)" onmouseover="showTip(event, 'fs30', 83)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 84)" onmouseover="showTip(event, 'fs34', 84)" class="f">consumeFun</span> (<span onmouseout="hideTip(event, 'fs11', 85)" onmouseover="showTip(event, 'fs11', 85)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span>) <span onmouseout="hideTip(event, 'fs32', 86)" onmouseover="showTip(event, 'fs32', 86)" class="i">propStream</span>
+<span onmouseout="hideTip(event, 'fs29', 87)" onmouseover="showTip(event, 'fs29', 87)" class="i">property</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 88)" onmouseover="showTip(event, 'fs35', 88)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;second&quot;</span>
+<span onmouseout="hideTip(event, 'fs29', 89)" onmouseover="showTip(event, 'fs29', 89)" class="i">property</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 90)" onmouseover="showTip(event, 'fs35', 90)" class="i">Value</span> <span class="o">&lt;-</span> <span class="s">&quot;third&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>first
+second
+third</code></pre></td></tr></table>
+
+<p>A mutable property that generates a stream of values and property change notifications as a side-effect</p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Remainders" transition="dissolve">
+
+<h3>Stream</h3>
+
+<h4>Choice stream</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 91)" onmouseover="showTip(event, 'fs36', 91)" class="i">evtSrc</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 92)" onmouseover="showTip(event, 'fs30', 92)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 93)" onmouseover="showTip(event, 'fs37', 93)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 94)" onmouseover="showTip(event, 'fs38', 94)" class="f">create</span> ()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs39', 95)" onmouseover="showTip(event, 'fs39', 95)" class="i">srcStream</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 96)" onmouseover="showTip(event, 'fs30', 96)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 97)" onmouseover="showTip(event, 'fs37', 97)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 98)" onmouseover="showTip(event, 'fs40', 98)" class="f">tap</span> <span onmouseout="hideTip(event, 'fs36', 99)" onmouseover="showTip(event, 'fs36', 99)" class="i">evtSrc</span>
+<span onmouseout="hideTip(event, 'fs30', 100)" onmouseover="showTip(event, 'fs30', 100)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 101)" onmouseover="showTip(event, 'fs34', 101)" class="f">consumeFun</span> (<span onmouseout="hideTip(event, 'fs11', 102)" onmouseover="showTip(event, 'fs11', 102)" class="f">printfn</span> <span class="s">&quot;First: </span><span class="pf">%s</span><span class="s">&quot;</span>) <span onmouseout="hideTip(event, 'fs39', 103)" onmouseover="showTip(event, 'fs39', 103)" class="i">srcStream</span>
+<span onmouseout="hideTip(event, 'fs12', 104)" onmouseover="showTip(event, 'fs12', 104)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs30', 105)" onmouseover="showTip(event, 'fs30', 105)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 106)" onmouseover="showTip(event, 'fs37', 106)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 107)" onmouseover="showTip(event, 'fs41', 107)" class="f">value</span> <span onmouseout="hideTip(event, 'fs36', 108)" onmouseover="showTip(event, 'fs36', 108)" class="i">evtSrc</span> <span class="s">&quot;Almost&quot;</span>
+<span onmouseout="hideTip(event, 'fs30', 109)" onmouseover="showTip(event, 'fs30', 109)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 110)" onmouseover="showTip(event, 'fs34', 110)" class="f">consumeFun</span> (<span onmouseout="hideTip(event, 'fs11', 111)" onmouseover="showTip(event, 'fs11', 111)" class="f">printfn</span> <span class="s">&quot;Second: </span><span class="pf">%s</span><span class="s">&quot;</span>) <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs30', 112)" onmouseover="showTip(event, 'fs30', 112)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 113)" onmouseover="showTip(event, 'fs37', 113)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 114)" onmouseover="showTip(event, 'fs40', 114)" class="f">tap</span> <span onmouseout="hideTip(event, 'fs36', 115)" onmouseover="showTip(event, 'fs36', 115)" class="i">evtSrc</span>
+<span onmouseout="hideTip(event, 'fs12', 116)" onmouseover="showTip(event, 'fs12', 116)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs30', 117)" onmouseover="showTip(event, 'fs30', 117)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 118)" onmouseover="showTip(event, 'fs37', 118)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 119)" onmouseover="showTip(event, 'fs41', 119)" class="f">value</span> <span onmouseout="hideTip(event, 'fs36', 120)" onmouseover="showTip(event, 'fs36', 120)" class="i">evtSrc</span> <span class="s">&quot;Done&quot;</span>
+<span onmouseout="hideTip(event, 'fs12', 121)" onmouseover="showTip(event, 'fs12', 121)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs30', 122)" onmouseover="showTip(event, 'fs30', 122)" class="t">Stream</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 123)" onmouseover="showTip(event, 'fs37', 123)" class="t">Src</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 124)" onmouseover="showTip(event, 'fs42', 124)" class="f">close</span> <span onmouseout="hideTip(event, 'fs36', 125)" onmouseover="showTip(event, 'fs36', 125)" class="i">evtSrc</span>
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>First: Almost
+First: Done
+Second: Done</code></pre></td></tr></table>
+
+<p>An imperative source of a stream of values called a stream source</p>
+
+</section>
+
+</section>
+
+<section >
+
+<h3><span class="nextsegment"><a href="index.html#/2">Agenda</a></span></h3>
+
+<ol>
+<li><a href="concurrency.html">Concurrency</a></li>
+<li><a href="hopac.html">Hopac</a></li>
+<li><a href="alternatives.html">Alternatives</a>
+<ul>
+<li><a href="fibonacci.html">Fibonacci Sequence</a></li>
+<li><a href="altDeepDive.html">How do they work?</a></li>
+</ul></li>
+<li><a href="remainder.html">IVar, MVar, Mailbox...</a></li>
+</ol>
+
+</section>
+
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'dissolve', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+

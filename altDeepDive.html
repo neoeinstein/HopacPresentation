@@ -1,0 +1,639 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Hopac - Alternatives: How do they work?</title>
+    <meta name="description" content="Introduction to Hopac and Synchronous Rendezvous">
+    <meta name="author" content="Marcus Griep">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/Moon.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://localhost:8083/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        <div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">namespace System.Threading</div>
+<div class="tip" id="fs3">namespace System.Collections</div>
+<div class="tip" id="fs4">namespace System.Collections.Generic</div>
+<div class="tip" id="fs5">namespace Hopac</div>
+<div class="tip" id="fs6">module Infixes<br /><br />from Hopac</div>
+<div class="tip" id="fs7">type Button =<br />&#160;&#160;{Pressed: Alt&lt;unit&gt;;}<br /><br />Full name: AltDeepDive.Button</div>
+<div class="tip" id="fs8">Button.Pressed: Alt&lt;unit&gt;</div>
+<div class="tip" id="fs9">type Alt&lt;&#39;T&gt; =<br />&#160;&#160;inherit Job&lt;&#39;T&gt;<br /><br />Full name: Hopac.Alt&lt;_&gt;</div>
+<div class="tip" id="fs10">type unit = Unit<br /><br />Full name: Microsoft.FSharp.Core.unit</div>
+<div class="tip" id="fs11">type Dialog =<br />&#160;&#160;{Yes: Button;<br />&#160;&#160;&#160;No: Button;<br />&#160;&#160;&#160;Show: Job&lt;unit&gt;;}<br /><br />Full name: AltDeepDive.Dialog</div>
+<div class="tip" id="fs12">Dialog.Yes: Button</div>
+<div class="tip" id="fs13">Dialog.No: Button</div>
+<div class="tip" id="fs14">Dialog.Show: Job&lt;unit&gt;</div>
+<div class="tip" id="fs15">type Job&lt;&#39;T&gt; =<br /><br />Full name: Hopac.Job&lt;_&gt;</div>
+<div class="tip" id="fs16">val askUser : dlg:Dialog -&gt; Job&lt;string&gt;<br /><br />Full name: AltDeepDive.askUser</div>
+<div class="tip" id="fs17">val dlg : Dialog</div>
+<div class="tip" id="fs18">val job : JobBuilder<br /><br />Full name: Hopac.TopLevel.job</div>
+<div class="tip" id="fs19">val wasYes : bool</div>
+<div class="tip" id="fs20">val choose : seq&lt;#Alt&lt;&#39;x&gt;&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Alt.choose</div>
+<div class="tip" id="fs21">val result : &#39;x -&gt; Job&lt;&#39;x&gt;<br /><br />Full name: Hopac.Job.result</div>
+<div class="tip" id="fs22">val yesCh : Ch&lt;unit&gt;<br /><br />Full name: AltDeepDive.yesCh</div>
+<div class="tip" id="fs23">val noCh : Ch&lt;unit&gt;<br /><br />Full name: AltDeepDive.noCh</div>
+<div class="tip" id="fs24">Multiple items<br />type Ch&lt;&#39;T&gt; =<br />&#160;&#160;inherit Alt&lt;&#39;T&gt;<br />&#160;&#160;new : unit -&gt; Ch&lt;&#39;T&gt;<br /><br />Full name: Hopac.Ch&lt;_&gt;<br /><br />--------------------<br />Ch() : unit</div>
+<div class="tip" id="fs25">val yesBtn : Button<br /><br />Full name: AltDeepDive.yesBtn</div>
+<div class="tip" id="fs26">val noBtn : Button<br /><br />Full name: AltDeepDive.noBtn</div>
+<div class="tip" id="fs27">val dlg : Dialog<br /><br />Full name: AltDeepDive.dlg</div>
+<div class="tip" id="fs28">val unit : unit -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Job.unit</div>
+<div class="tip" id="fs29">val futureResult : Promise&lt;string&gt;<br /><br />Full name: AltDeepDive.futureResult</div>
+<div class="tip" id="fs30">val run : Job&lt;&#39;x&gt; -&gt; &#39;x<br /><br />Full name: Hopac.TopLevel.run</div>
+<div class="tip" id="fs31">Multiple items<br />type Promise&lt;&#39;T&gt; =<br />&#160;&#160;inherit Alt&lt;&#39;T&gt;<br />&#160;&#160;new : tJ:Job&lt;&#39;T&gt; -&gt; Promise&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Full : bool<br /><br />Full name: Hopac.Promise&lt;_&gt;<br /><br />--------------------<br />Promise(tJ: Job&lt;&#39;T&gt;) : unit<br />Promise(value: &#39;T) : unit<br />Promise(e: exn) : unit</div>
+<div class="tip" id="fs32">val queue : Job&lt;&#39;x&gt; -&gt; Job&lt;Promise&lt;&#39;x&gt;&gt;<br /><br />Full name: Hopac.Promise.queue</div>
+<div class="tip" id="fs33">val give : Ch&lt;&#39;x&gt; -&gt; &#39;x -&gt; Alt&lt;unit&gt;<br /><br />Full name: Hopac.Ch.give</div>
+<div class="tip" id="fs34">val read : Promise&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Promise.read</div>
+<div class="tip" id="fs35">type Ticks = int64<br /><br />Full name: AltDeepDive.Ticks</div>
+<div class="tip" id="fs36">Multiple items<br />val int64 : value:&#39;T -&gt; int64 (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int64<br /><br />--------------------<br />type int64 = Int64<br /><br />Full name: Microsoft.FSharp.Core.int64<br /><br />--------------------<br />type int64&lt;&#39;Measure&gt; = int64<br /><br />Full name: Microsoft.FSharp.Core.int64&lt;_&gt;</div>
+<div class="tip" id="fs37">val mutable curTicks : Ticks<br /><br />Full name: AltDeepDive.curTicks</div>
+<div class="tip" id="fs38">val timerReqCh : Ch&lt;Ticks * Ch&lt;unit&gt;&gt;<br /><br />Full name: AltDeepDive.timerReqCh</div>
+<div class="tip" id="fs39">val atTime : t:Ticks -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.atTime</div>
+<div class="tip" id="fs40">val t : Ticks</div>
+<div class="tip" id="fs41">val prepareJob : (unit -&gt; #Job&lt;&#39;b&gt;) -&gt; Alt&lt;&#39;x&gt; (requires &#39;b :&gt; Alt&lt;&#39;x&gt;)<br /><br />Full name: Hopac.Alt.prepareJob</div>
+<div class="tip" id="fs42">val replyCh : Ch&lt;unit&gt;</div>
+<div class="tip" id="fs43">val send : Ch&lt;&#39;x&gt; -&gt; &#39;x -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Ch.send</div>
+<div class="tip" id="fs44">val take : Ch&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Ch.take</div>
+<div class="tip" id="fs45">val verbose : c:string -&gt; alt:Alt&lt;&#39;a&gt; -&gt; Alt&lt;&#39;a&gt;<br /><br />Full name: AltDeepDive.verbose</div>
+<div class="tip" id="fs46">val c : string</div>
+<div class="tip" id="fs47">val alt : Alt&lt;&#39;a&gt;</div>
+<div class="tip" id="fs48">val withNackJob : (Promise&lt;unit&gt; -&gt; #Job&lt;&#39;c&gt;) -&gt; Alt&lt;&#39;x&gt; (requires &#39;c :&gt; Alt&lt;&#39;x&gt;)<br /><br />Full name: Hopac.Alt.withNackJob</div>
+<div class="tip" id="fs49">val nack : Promise&lt;unit&gt;</div>
+<div class="tip" id="fs50">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+<div class="tip" id="fs51">val start : Job&lt;unit&gt; -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Job.start</div>
+<div class="tip" id="fs52">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs53">val x : &#39;a</div>
+<div class="tip" id="fs54">val always : &#39;x -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Alt.always</div>
+<div class="tip" id="fs55">val never : unit -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Alt.never</div>
+<div class="tip" id="fs56">Multiple items<br />union case Lock.Lock: int64 -&gt; Lock<br /><br />--------------------<br />type Lock = | Lock of int64<br /><br />Full name: AltDeepDive.Lock</div>
+<div class="tip" id="fs57">type LockRequest =<br />&#160;&#160;| Acquire of int64 * replyCh: Ch&lt;unit&gt; * abortAlt: Alt&lt;unit&gt;<br />&#160;&#160;| Release of int64<br /><br />Full name: AltDeepDive.LockRequest</div>
+<div class="tip" id="fs58">union case LockRequest.Acquire: int64 * replyCh: Ch&lt;unit&gt; * abortAlt: Alt&lt;unit&gt; -&gt; LockRequest</div>
+<div class="tip" id="fs59">union case LockRequest.Release: int64 -&gt; LockRequest</div>
+<div class="tip" id="fs60">type LockServer =<br />&#160;&#160;{mutable nextId: int64;<br />&#160;&#160;&#160;reqCh: Ch&lt;LockRequest&gt;;}<br /><br />Full name: AltDeepDive.LockServer</div>
+<div class="tip" id="fs61">LockServer.nextId: int64</div>
+<div class="tip" id="fs62">LockServer.reqCh: Ch&lt;LockRequest&gt;</div>
+<div class="tip" id="fs63">val createLock : s:LockServer -&gt; Lock<br /><br />Full name: AltDeepDive.createLock</div>
+<div class="tip" id="fs64">val s : LockServer</div>
+<div class="tip" id="fs65">type Interlocked =<br />&#160;&#160;static member Add : location1:int * value:int -&gt; int + 1 overload<br />&#160;&#160;static member CompareExchange : location1:int * value:int * comparand:int -&gt; int + 6 overloads<br />&#160;&#160;static member Decrement : location:int -&gt; int + 1 overload<br />&#160;&#160;static member Exchange : location1:int * value:int -&gt; int + 6 overloads<br />&#160;&#160;static member Increment : location:int -&gt; int + 1 overload<br />&#160;&#160;static member Read : location:int64 -&gt; int64<br /><br />Full name: System.Threading.Interlocked</div>
+<div class="tip" id="fs66">Interlocked.Increment(location: byref&lt;int64&gt;) : int64<br />Interlocked.Increment(location: byref&lt;int&gt;) : int</div>
+<div class="tip" id="fs67">val release : s:LockServer -&gt; Lock -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.release</div>
+<div class="tip" id="fs68">val l : int64</div>
+<div class="tip" id="fs69">val acquire : s:LockServer -&gt; Lock -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.acquire</div>
+<div class="tip" id="fs70">val abortAlt : Promise&lt;unit&gt;</div>
+<div class="tip" id="fs71">val lockHeld : queue:Queue&lt;&#39;a * &#39;b&gt; -&gt; replyCh:&#39;a -&gt; abortAlt:&#39;b -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.lockHeld</div>
+<div class="tip" id="fs72">val queue : Queue&lt;&#39;a * &#39;b&gt;</div>
+<div class="tip" id="fs73">Multiple items<br />type Queue&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Queue&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member CopyTo : array:&#39;T[] * arrayIndex:int -&gt; unit<br />&#160;&#160;member Count : int<br />&#160;&#160;member Dequeue : unit -&gt; &#39;T<br />&#160;&#160;member Enqueue : item:&#39;T -&gt; unit<br />&#160;&#160;member GetEnumerator : unit -&gt; Enumerator&lt;&#39;T&gt;<br />&#160;&#160;member Peek : unit -&gt; &#39;T<br />&#160;&#160;member ToArray : unit -&gt; &#39;T[]<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />Full name: System.Collections.Generic.Queue&lt;_&gt;<br /><br />--------------------<br />Queue() : unit<br />Queue(capacity: int) : unit<br />Queue(collection: IEnumerable&lt;&#39;T&gt;) : unit</div>
+<div class="tip" id="fs74">val replyCh : &#39;a</div>
+<div class="tip" id="fs75">val abortAlt : &#39;b</div>
+<div class="tip" id="fs76">Queue.Enqueue(item: &#39;a * &#39;b) : unit</div>
+<div class="tip" id="fs77">val unit : unit -&gt; Alt&lt;unit&gt;<br /><br />Full name: Hopac.Alt.unit</div>
+<div class="tip" id="fs78">val lockFree : locksDict:Dictionary&lt;&#39;a,Queue&lt;&#39;b&gt;&gt; -&gt; lock:&#39;a -&gt; replyCh:Ch&lt;unit&gt; -&gt; abortAlt:Alt&lt;unit&gt; -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.lockFree</div>
+<div class="tip" id="fs79">val locksDict : Dictionary&lt;&#39;a,Queue&lt;&#39;b&gt;&gt;</div>
+<div class="tip" id="fs80">Multiple items<br />type Dictionary&lt;&#39;TKey,&#39;TValue&gt; =<br />&#160;&#160;new : unit -&gt; Dictionary&lt;&#39;TKey, &#39;TValue&gt; + 5 overloads<br />&#160;&#160;member Add : key:&#39;TKey * value:&#39;TValue -&gt; unit<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Comparer : IEqualityComparer&lt;&#39;TKey&gt;<br />&#160;&#160;member ContainsKey : key:&#39;TKey -&gt; bool<br />&#160;&#160;member ContainsValue : value:&#39;TValue -&gt; bool<br />&#160;&#160;member Count : int<br />&#160;&#160;member GetEnumerator : unit -&gt; Enumerator&lt;&#39;TKey, &#39;TValue&gt;<br />&#160;&#160;member GetObjectData : info:SerializationInfo * context:StreamingContext -&gt; unit<br />&#160;&#160;member Item : &#39;TKey -&gt; &#39;TValue with get, set<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br />&#160;&#160;nested type KeyCollection<br />&#160;&#160;nested type ValueCollection<br /><br />Full name: System.Collections.Generic.Dictionary&lt;_,_&gt;<br /><br />--------------------<br />Dictionary() : unit<br />Dictionary(capacity: int) : unit<br />Dictionary(comparer: IEqualityComparer&lt;&#39;TKey&gt;) : unit<br />Dictionary(dictionary: IDictionary&lt;&#39;TKey,&#39;TValue&gt;) : unit<br />Dictionary(capacity: int, comparer: IEqualityComparer&lt;&#39;TKey&gt;) : unit<br />Dictionary(dictionary: IDictionary&lt;&#39;TKey,&#39;TValue&gt;, comparer: IEqualityComparer&lt;&#39;TKey&gt;) : unit</div>
+<div class="tip" id="fs81">val lock : &#39;a</div>
+<div class="tip" id="fs82">val abortAlt : Alt&lt;unit&gt;</div>
+<div class="tip" id="fs83">Dictionary.Add(key: &#39;a, value: Queue&lt;&#39;b&gt;) : unit</div>
+<div class="tip" id="fs84">val releaseNoWaiting : Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.releaseNoWaiting</div>
+<div class="tip" id="fs85">val releaseWithWaiting : locksDict:Dictionary&lt;&#39;a,&#39;b&gt; -&gt; queue:Queue&lt;#Ch&lt;unit&gt; * #Alt&lt;unit&gt;&gt; -&gt; lock:&#39;a -&gt; Alt&lt;unit&gt;<br /><br />Full name: AltDeepDive.releaseWithWaiting</div>
+<div class="tip" id="fs86">val locksDict : Dictionary&lt;&#39;a,&#39;b&gt;</div>
+<div class="tip" id="fs87">val queue : Queue&lt;#Ch&lt;unit&gt; * #Alt&lt;unit&gt;&gt;</div>
+<div class="tip" id="fs88">val assign : (unit -&gt; Alt&lt;unit&gt;)</div>
+<div class="tip" id="fs89">property Queue.Count: int</div>
+<div class="tip" id="fs90">Dictionary.Remove(key: &#39;a) : bool</div>
+<div class="tip" id="fs91">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs92">val replyCh : #Ch&lt;unit&gt;</div>
+<div class="tip" id="fs93">val abortAlt : #Alt&lt;unit&gt;</div>
+<div class="tip" id="fs94">Queue.Dequeue() : &#39;c * &#39;d</div>
+<div class="tip" id="fs95">val startLockServer : Job&lt;LockServer&gt;<br /><br />Full name: AltDeepDive.startLockServer</div>
+<div class="tip" id="fs96">val delay : (unit -&gt; #Job&lt;&#39;x&gt;) -&gt; Job&lt;&#39;x&gt;<br /><br />Full name: Hopac.Job.delay</div>
+<div class="tip" id="fs97">val locks : Dictionary&lt;int64,Queue&lt;Ch&lt;unit&gt; * Alt&lt;unit&gt;&gt;&gt;</div>
+<div class="tip" id="fs98">val foreverServer : Job&lt;unit&gt; -&gt; Job&lt;unit&gt;<br /><br />Full name: Hopac.Job.foreverServer</div>
+<div class="tip" id="fs99">val lock : int64</div>
+<div class="tip" id="fs100">Dictionary.TryGetValue(key: int64, value: byref&lt;Queue&lt;Ch&lt;unit&gt; * Alt&lt;unit&gt;&gt;&gt;) : bool</div>
+<div class="tip" id="fs101">val pend : Queue&lt;Ch&lt;unit&gt; * Alt&lt;unit&gt;&gt;</div>
+<div class="tip" id="fs102">val withLock : s:LockServer -&gt; l:Lock -&gt; xJ:Job&lt;&#39;x&gt; -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: AltDeepDive.withLock</div>
+<div class="tip" id="fs103">val l : Lock</div>
+<div class="tip" id="fs104">val xJ : Job&lt;&#39;x&gt;</div>
+<div class="tip" id="fs105">val tryFinallyJob : Job&lt;&#39;x&gt; -&gt; Job&lt;unit&gt; -&gt; Job&lt;&#39;x&gt;<br /><br />Full name: Hopac.Job.tryFinallyJob</div>
+<div class="tip" id="fs106">val lockSrv : LockServer<br /><br />Full name: AltDeepDive.lockSrv</div>
+<div class="tip" id="fs107">val withMyLock : (Job&lt;unit&gt; -&gt; Alt&lt;unit&gt;)<br /><br />Full name: AltDeepDive.withMyLock</div>
+<div class="tip" id="fs108">val lift : (&#39;x -&gt; &#39;y) -&gt; &#39;x -&gt; Job&lt;&#39;y&gt;<br /><br />Full name: Hopac.Job.lift</div>
+<div class="tip" id="fs109">val timeOutMillis : int -&gt; Alt&lt;unit&gt;<br /><br />Full name: Hopac.TopLevel.timeOutMillis</div>
+<div class="tip" id="fs110">val prepareFun : (unit -&gt; #Alt&lt;&#39;x&gt;) -&gt; Alt&lt;&#39;x&gt;<br /><br />Full name: Hopac.Alt.prepareFun</div>
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+
+<section >
+
+<h2>Alternatives</h2>
+
+<p><img src="images/sciencedog.jpg" alt="Science" /></p>
+
+<h3>How do they work?</h3>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>What are alternatives?</h3>
+
+<p>An alternative, <code>Alt&lt;'x&gt;</code>, represents the possibility of communicating a
+value of type <code>'x</code> from one concurrent entity to another. How that value is
+computed and when that value is available are details encapsulated by the
+alternative. Alternatives can be created and combined in many ways allowing
+alternatives to encapsulate complex communication protocols.</p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Binding</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">do!</span> <span class="i">Ch</span><span class="o">.</span><span class="i">give</span> <span class="i">aChannel</span> <span class="i">aValue</span>
+
+<span class="k">let!</span> <span class="i">aValue</span> <span class="o">=</span> <span class="i">Ch</span><span class="o">.</span><span class="i">take</span> <span class="i">aChannel</span>
+</code></pre></td>
+</tr>
+</table>
+
+<p>Conceptually, binding an alternative operation <em>instantiates</em> the given
+alternative, <em>waits until</em> the alternative becomes <em>available</em> and then
+<em>commits</em> to the alternative and returns the value communicated by the
+alternative.</p>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Choice and Wrapping</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="t">Button</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">Pressed</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs9', 12)" onmouseover="showTip(event, 'fs9', 12)" class="t">Alt</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 13)" onmouseover="showTip(event, 'fs10', 13)" class="t">unit</span><span class="o">&gt;</span> }
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs11', 14)" onmouseover="showTip(event, 'fs11', 14)" class="t">Dialog</span> <span class="o">=</span> { <span onmouseout="hideTip(event, 'fs12', 15)" onmouseover="showTip(event, 'fs12', 15)" class="i">Yes</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="t">Button</span>; <span onmouseout="hideTip(event, 'fs13', 17)" onmouseover="showTip(event, 'fs13', 17)" class="i">No</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs7', 18)" onmouseover="showTip(event, 'fs7', 18)" class="t">Button</span>; <span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="i">Show</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs15', 20)" onmouseover="showTip(event, 'fs15', 20)" class="t">Job</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="t">unit</span><span class="o">&gt;</span>}
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 22)" onmouseover="showTip(event, 'fs16', 22)" class="f">askUser</span> <span onmouseout="hideTip(event, 'fs17', 23)" onmouseover="showTip(event, 'fs17', 23)" class="i">dlg</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 24)" onmouseover="showTip(event, 'fs18', 24)" class="i">job</span> {
+  <span class="k">do!</span> <span onmouseout="hideTip(event, 'fs17', 25)" onmouseover="showTip(event, 'fs17', 25)" class="i">dlg</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="i">Show</span>
+  <span class="k">let!</span> <span onmouseout="hideTip(event, 'fs19', 27)" onmouseover="showTip(event, 'fs19', 27)" class="i">wasYes</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs9', 28)" onmouseover="showTip(event, 'fs9', 28)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 29)" onmouseover="showTip(event, 'fs20', 29)" class="f">choose</span> [
+      <span onmouseout="hideTip(event, 'fs17', 30)" onmouseover="showTip(event, 'fs17', 30)" class="i">dlg</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 31)" onmouseover="showTip(event, 'fs12', 31)" class="i">Yes</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 32)" onmouseover="showTip(event, 'fs8', 32)" class="i">Pressed</span> <span class="o">^=&gt;</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs15', 33)" onmouseover="showTip(event, 'fs15', 33)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 34)" onmouseover="showTip(event, 'fs21', 34)" class="f">result</span> <span class="k">true</span>
+      <span onmouseout="hideTip(event, 'fs17', 35)" onmouseover="showTip(event, 'fs17', 35)" class="i">dlg</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 36)" onmouseover="showTip(event, 'fs13', 36)" class="i">No</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 37)" onmouseover="showTip(event, 'fs8', 37)" class="i">Pressed</span>  <span class="o">^=&gt;</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 39)" onmouseover="showTip(event, 'fs21', 39)" class="f">result</span> <span class="k">false</span>
+    ]
+  <span class="k">return</span>
+    <span class="k">if</span> <span class="i">wasYes</span> <span class="k">then</span>
+      <span class="s">&quot;Ok&quot;</span>
+    <span class="k">else</span>
+      <span class="s">&quot;I&#39;m sorry, Dave, but I can&#39;t do that&quot;</span>
+}
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Choice and Wrapping</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="i">yesCh</span>, <span onmouseout="hideTip(event, 'fs23', 41)" onmouseover="showTip(event, 'fs23', 41)" class="i">noCh</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 42)" onmouseover="showTip(event, 'fs24', 42)" class="t">Ch</span> (), <span onmouseout="hideTip(event, 'fs24', 43)" onmouseover="showTip(event, 'fs24', 43)" class="t">Ch</span> ()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 44)" onmouseover="showTip(event, 'fs25', 44)" class="i">yesBtn</span> <span class="o">=</span> { <span class="i">Pressed</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 45)" onmouseover="showTip(event, 'fs22', 45)" class="i">yesCh</span> }
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 46)" onmouseover="showTip(event, 'fs26', 46)" class="i">noBtn</span> <span class="o">=</span> { <span class="i">Pressed</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 47)" onmouseover="showTip(event, 'fs23', 47)" class="i">noCh</span> }
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 48)" onmouseover="showTip(event, 'fs27', 48)" class="i">dlg</span> <span class="o">=</span> { <span class="i">Yes</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs25', 49)" onmouseover="showTip(event, 'fs25', 49)" class="i">yesBtn</span>; <span class="i">No</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 50)" onmouseover="showTip(event, 'fs26', 50)" class="i">noBtn</span>; <span class="i">Show</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 51)" onmouseover="showTip(event, 'fs15', 51)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 52)" onmouseover="showTip(event, 'fs28', 52)" class="f">unit</span> () }
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 53)" onmouseover="showTip(event, 'fs29', 53)" class="i">futureResult</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 54)" onmouseover="showTip(event, 'fs30', 54)" class="f">run</span> (<span onmouseout="hideTip(event, 'fs31', 55)" onmouseover="showTip(event, 'fs31', 55)" class="t">Promise</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 56)" onmouseover="showTip(event, 'fs32', 56)" class="f">queue</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs16', 57)" onmouseover="showTip(event, 'fs16', 57)" class="f">askUser</span> <span onmouseout="hideTip(event, 'fs27', 58)" onmouseover="showTip(event, 'fs27', 58)" class="i">dlg</span>)
+<span onmouseout="hideTip(event, 'fs30', 59)" onmouseover="showTip(event, 'fs30', 59)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs24', 60)" onmouseover="showTip(event, 'fs24', 60)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 61)" onmouseover="showTip(event, 'fs33', 61)" class="f">give</span> <span onmouseout="hideTip(event, 'fs23', 62)" onmouseover="showTip(event, 'fs23', 62)" class="i">noCh</span> ()
+<span onmouseout="hideTip(event, 'fs30', 63)" onmouseover="showTip(event, 'fs30', 63)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs31', 64)" onmouseover="showTip(event, 'fs31', 64)" class="t">Promise</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 65)" onmouseover="showTip(event, 'fs34', 65)" class="f">read</span> <span onmouseout="hideTip(event, 'fs29', 66)" onmouseover="showTip(event, 'fs29', 66)" class="i">futureResult</span>
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>"I'm sorry, Dave, but I can't do that"</code></pre></td></tr></table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Choice and Wrapping</h3>
+
+<ul>
+<li>Alt.choose (<|>)
+<ul>
+<li>Wait for first available</li>
+<li>Commit to one</li>
+<li>Deterministic</li>
+</ul></li>
+<li>Alt.chooser (<~>)
+<ul>
+<li>Non-deterministic</li>
+</ul></li>
+<li>Alt.afterJob (^=&gt;)
+<ul>
+<li>Extends an alternative to wrap additional operations after commit</li>
+</ul></li>
+</ul>
+
+</section>
+
+</section>
+
+<section >
+
+<h3>Prepare Job</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs35', 67)" onmouseover="showTip(event, 'fs35', 67)" class="t">Ticks</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs36', 68)" onmouseover="showTip(event, 'fs36', 68)" class="t">int64</span>
+<span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs37', 69)" onmouseover="showTip(event, 'fs37', 69)" class="v">curTicks</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs35', 70)" onmouseover="showTip(event, 'fs35', 70)" class="t">Ticks</span> <span class="o">=</span> <span class="n">0L</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs38', 71)" onmouseover="showTip(event, 'fs38', 71)" class="i">timerReqCh</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="t">Ch</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs35', 73)" onmouseover="showTip(event, 'fs35', 73)" class="t">Ticks</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs24', 74)" onmouseover="showTip(event, 'fs24', 74)" class="t">Ch</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 75)" onmouseover="showTip(event, 'fs10', 75)" class="t">unit</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 76)" onmouseover="showTip(event, 'fs24', 76)" class="t">Ch</span> ()
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs39', 77)" onmouseover="showTip(event, 'fs39', 77)" class="f">atTime</span> (<span onmouseout="hideTip(event, 'fs40', 78)" onmouseover="showTip(event, 'fs40', 78)" class="i">t</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs35', 79)" onmouseover="showTip(event, 'fs35', 79)" class="t">Ticks</span>) <span class="o">:</span> <span onmouseout="hideTip(event, 'fs9', 80)" onmouseover="showTip(event, 'fs9', 80)" class="t">Alt</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 81)" onmouseover="showTip(event, 'fs10', 81)" class="t">unit</span><span class="o">&gt;</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs9', 82)" onmouseover="showTip(event, 'fs9', 82)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 83)" onmouseover="showTip(event, 'fs41', 83)" class="f">prepareJob</span> <span class="o">&lt;|</span> <span class="k">fun</span> () <span class="k">-&gt;</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs42', 84)" onmouseover="showTip(event, 'fs42', 84)" class="i">replyCh</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 85)" onmouseover="showTip(event, 'fs24', 85)" class="t">Ch</span> ()
+    <span onmouseout="hideTip(event, 'fs24', 86)" onmouseover="showTip(event, 'fs24', 86)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs43', 87)" onmouseover="showTip(event, 'fs43', 87)" class="f">send</span> <span onmouseout="hideTip(event, 'fs38', 88)" onmouseover="showTip(event, 'fs38', 88)" class="i">timerReqCh</span> (<span onmouseout="hideTip(event, 'fs40', 89)" onmouseover="showTip(event, 'fs40', 89)" class="i">t</span>, <span onmouseout="hideTip(event, 'fs42', 90)" onmouseover="showTip(event, 'fs42', 90)" class="i">replyCh</span>) <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">-.</span>
+    <span onmouseout="hideTip(event, 'fs24', 91)" onmouseover="showTip(event, 'fs24', 91)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 92)" onmouseover="showTip(event, 'fs44', 92)" class="f">take</span> <span onmouseout="hideTip(event, 'fs42', 93)" onmouseover="showTip(event, 'fs42', 93)" class="i">replyCh</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>Negative acknowledgements</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 94)" onmouseover="showTip(event, 'fs45', 94)" class="f">verbose</span> <span onmouseout="hideTip(event, 'fs46', 95)" onmouseover="showTip(event, 'fs46', 95)" class="i">c</span> <span onmouseout="hideTip(event, 'fs47', 96)" onmouseover="showTip(event, 'fs47', 96)" class="i">alt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 97)" onmouseover="showTip(event, 'fs9', 97)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs48', 98)" onmouseover="showTip(event, 'fs48', 98)" class="f">withNackJob</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs49', 99)" onmouseover="showTip(event, 'fs49', 99)" class="i">nack</span> <span class="k">-&gt;</span>
+  <span onmouseout="hideTip(event, 'fs50', 100)" onmouseover="showTip(event, 'fs50', 100)" class="f">printf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s"> Instantiated and &quot;</span> <span onmouseout="hideTip(event, 'fs46', 101)" onmouseover="showTip(event, 'fs46', 101)" class="i">c</span>
+  <span onmouseout="hideTip(event, 'fs15', 102)" onmouseover="showTip(event, 'fs15', 102)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs51', 103)" onmouseover="showTip(event, 'fs51', 103)" class="f">start</span> (<span onmouseout="hideTip(event, 'fs49', 104)" onmouseover="showTip(event, 'fs49', 104)" class="i">nack</span> <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">-</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs52', 105)" onmouseover="showTip(event, 'fs52', 105)" class="f">printfn</span> <span class="s">&quot;aborted.&quot;</span>) <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">-.</span>
+  <span onmouseout="hideTip(event, 'fs47', 106)" onmouseover="showTip(event, 'fs47', 106)" class="i">alt</span> <span class="o">^-&gt;</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs53', 107)" onmouseover="showTip(event, 'fs53', 107)" class="i">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs52', 108)" onmouseover="showTip(event, 'fs52', 108)" class="f">printfn</span> <span class="s">&quot;committed to.&quot;</span> ; <span onmouseout="hideTip(event, 'fs53', 109)" onmouseover="showTip(event, 'fs53', 109)" class="i">x</span>
+
+<span onmouseout="hideTip(event, 'fs30', 110)" onmouseover="showTip(event, 'fs30', 110)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 111)" onmouseover="showTip(event, 'fs9', 111)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 112)" onmouseover="showTip(event, 'fs20', 112)" class="f">choose</span> [<span onmouseout="hideTip(event, 'fs45', 113)" onmouseover="showTip(event, 'fs45', 113)" class="f">verbose</span> <span class="s">&quot;A&quot;</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 114)" onmouseover="showTip(event, 'fs9', 114)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 115)" onmouseover="showTip(event, 'fs54', 115)" class="f">always</span> <span class="n">1</span>; <span onmouseout="hideTip(event, 'fs9', 116)" onmouseover="showTip(event, 'fs9', 116)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 117)" onmouseover="showTip(event, 'fs54', 117)" class="f">always</span> <span class="n">2</span>]
+<span onmouseout="hideTip(event, 'fs30', 118)" onmouseover="showTip(event, 'fs30', 118)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 119)" onmouseover="showTip(event, 'fs9', 119)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 120)" onmouseover="showTip(event, 'fs20', 120)" class="f">choose</span> [<span onmouseout="hideTip(event, 'fs45', 121)" onmouseover="showTip(event, 'fs45', 121)" class="f">verbose</span> <span class="s">&quot;B&quot;</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 122)" onmouseover="showTip(event, 'fs9', 122)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs55', 123)" onmouseover="showTip(event, 'fs55', 123)" class="f">never</span> (); <span onmouseout="hideTip(event, 'fs9', 124)" onmouseover="showTip(event, 'fs9', 124)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 125)" onmouseover="showTip(event, 'fs54', 125)" class="f">always</span> <span class="n">2</span>]
+<span onmouseout="hideTip(event, 'fs30', 126)" onmouseover="showTip(event, 'fs30', 126)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 127)" onmouseover="showTip(event, 'fs9', 127)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 128)" onmouseover="showTip(event, 'fs20', 128)" class="f">choose</span> [<span onmouseout="hideTip(event, 'fs9', 129)" onmouseover="showTip(event, 'fs9', 129)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 130)" onmouseover="showTip(event, 'fs54', 130)" class="f">always</span> <span class="n">1</span>; <span onmouseout="hideTip(event, 'fs45', 131)" onmouseover="showTip(event, 'fs45', 131)" class="f">verbose</span> <span class="s">&quot;C&quot;</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 132)" onmouseover="showTip(event, 'fs9', 132)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 133)" onmouseover="showTip(event, 'fs54', 133)" class="f">always</span> <span class="n">2</span>]
+</code></pre></td>
+</tr>
+</table>
+
+<table class="pre"><tr><td><pre><code>A Instantiated and committed to.
+B Instantiated and aborted.</code></pre></td></tr></table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Lock server</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs56', 134)" onmouseover="showTip(event, 'fs56', 134)" class="t">Lock</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs56', 135)" onmouseover="showTip(event, 'fs56', 135)" class="p">Lock</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs36', 136)" onmouseover="showTip(event, 'fs36', 136)" class="t">int64</span>
+
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs57', 137)" onmouseover="showTip(event, 'fs57', 137)" class="t">LockRequest</span> <span class="o">=</span>
+  | <span onmouseout="hideTip(event, 'fs58', 138)" onmouseover="showTip(event, 'fs58', 138)" class="p">Acquire</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs36', 139)" onmouseover="showTip(event, 'fs36', 139)" class="t">int64</span> <span class="o">*</span> <span class="i">replyCh</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs24', 140)" onmouseover="showTip(event, 'fs24', 140)" class="t">Ch</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 141)" onmouseover="showTip(event, 'fs10', 141)" class="t">unit</span><span class="o">&gt;</span> <span class="o">*</span> <span class="i">abortAlt</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs9', 142)" onmouseover="showTip(event, 'fs9', 142)" class="t">Alt</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 143)" onmouseover="showTip(event, 'fs10', 143)" class="t">unit</span><span class="o">&gt;</span>
+  | <span onmouseout="hideTip(event, 'fs59', 144)" onmouseover="showTip(event, 'fs59', 144)" class="p">Release</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs36', 145)" onmouseover="showTip(event, 'fs36', 145)" class="t">int64</span>
+
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs60', 146)" onmouseover="showTip(event, 'fs60', 146)" class="t">LockServer</span> <span class="o">=</span>
+  { <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs61', 147)" onmouseover="showTip(event, 'fs61', 147)" class="v">nextId</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs36', 148)" onmouseover="showTip(event, 'fs36', 148)" class="t">int64</span>
+    <span onmouseout="hideTip(event, 'fs62', 149)" onmouseover="showTip(event, 'fs62', 149)" class="i">reqCh</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs24', 150)" onmouseover="showTip(event, 'fs24', 150)" class="t">Ch</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs57', 151)" onmouseover="showTip(event, 'fs57', 151)" class="t">LockRequest</span><span class="o">&gt;</span> }
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Lock server</h3>
+
+<h4>Client</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs63', 152)" onmouseover="showTip(event, 'fs63', 152)" class="f">createLock</span> <span onmouseout="hideTip(event, 'fs64', 153)" onmouseover="showTip(event, 'fs64', 153)" class="i">s</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs56', 154)" onmouseover="showTip(event, 'fs56', 154)" class="p">Lock</span> (<span onmouseout="hideTip(event, 'fs65', 155)" onmouseover="showTip(event, 'fs65', 155)" class="t">Interlocked</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs66', 156)" onmouseover="showTip(event, 'fs66', 156)" class="f">Increment</span> <span class="o">&amp;</span><span onmouseout="hideTip(event, 'fs64', 157)" onmouseover="showTip(event, 'fs64', 157)" class="i">s</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 158)" onmouseover="showTip(event, 'fs61', 158)" class="v">nextId</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs67', 159)" onmouseover="showTip(event, 'fs67', 159)" class="f">release</span> <span onmouseout="hideTip(event, 'fs64', 160)" onmouseover="showTip(event, 'fs64', 160)" class="i">s</span> (<span onmouseout="hideTip(event, 'fs56', 161)" onmouseover="showTip(event, 'fs56', 161)" class="p">Lock</span> <span onmouseout="hideTip(event, 'fs68', 162)" onmouseover="showTip(event, 'fs68', 162)" class="i">l</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs24', 163)" onmouseover="showTip(event, 'fs24', 163)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 164)" onmouseover="showTip(event, 'fs33', 164)" class="f">give</span> <span onmouseout="hideTip(event, 'fs64', 165)" onmouseover="showTip(event, 'fs64', 165)" class="i">s</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 166)" onmouseover="showTip(event, 'fs62', 166)" class="i">reqCh</span> (<span onmouseout="hideTip(event, 'fs59', 167)" onmouseover="showTip(event, 'fs59', 167)" class="p">Release</span> <span onmouseout="hideTip(event, 'fs68', 168)" onmouseover="showTip(event, 'fs68', 168)" class="i">l</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs69', 169)" onmouseover="showTip(event, 'fs69', 169)" class="f">acquire</span> <span onmouseout="hideTip(event, 'fs64', 170)" onmouseover="showTip(event, 'fs64', 170)" class="i">s</span> (<span onmouseout="hideTip(event, 'fs56', 171)" onmouseover="showTip(event, 'fs56', 171)" class="p">Lock</span> <span onmouseout="hideTip(event, 'fs68', 172)" onmouseover="showTip(event, 'fs68', 172)" class="i">l</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs9', 173)" onmouseover="showTip(event, 'fs9', 173)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs48', 174)" onmouseover="showTip(event, 'fs48', 174)" class="f">withNackJob</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs70', 175)" onmouseover="showTip(event, 'fs70', 175)" class="i">abortAlt</span> <span class="k">-&gt;</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs42', 176)" onmouseover="showTip(event, 'fs42', 176)" class="i">replyCh</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 177)" onmouseover="showTip(event, 'fs24', 177)" class="t">Ch</span> ()
+    <span onmouseout="hideTip(event, 'fs24', 178)" onmouseover="showTip(event, 'fs24', 178)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs43', 179)" onmouseover="showTip(event, 'fs43', 179)" class="f">send</span> <span onmouseout="hideTip(event, 'fs64', 180)" onmouseover="showTip(event, 'fs64', 180)" class="i">s</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 181)" onmouseover="showTip(event, 'fs62', 181)" class="i">reqCh</span> (<span onmouseout="hideTip(event, 'fs58', 182)" onmouseover="showTip(event, 'fs58', 182)" class="p">Acquire</span> (<span onmouseout="hideTip(event, 'fs68', 183)" onmouseover="showTip(event, 'fs68', 183)" class="i">l</span>, <span onmouseout="hideTip(event, 'fs42', 184)" onmouseover="showTip(event, 'fs42', 184)" class="i">replyCh</span>, <span onmouseout="hideTip(event, 'fs70', 185)" onmouseover="showTip(event, 'fs70', 185)" class="i">abortAlt</span>))
+    <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">-.</span> <span onmouseout="hideTip(event, 'fs24', 186)" onmouseover="showTip(event, 'fs24', 186)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 187)" onmouseover="showTip(event, 'fs44', 187)" class="f">take</span> <span onmouseout="hideTip(event, 'fs42', 188)" onmouseover="showTip(event, 'fs42', 188)" class="i">replyCh</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Lock server</h3>
+
+<h4>Server</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs71', 189)" onmouseover="showTip(event, 'fs71', 189)" class="f">lockHeld</span> (<span onmouseout="hideTip(event, 'fs72', 190)" onmouseover="showTip(event, 'fs72', 190)" class="i">queue</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs73', 191)" onmouseover="showTip(event, 'fs73', 191)" class="t">Queue</span><span class="o">&lt;</span>_<span class="o">&gt;</span>) <span onmouseout="hideTip(event, 'fs74', 192)" onmouseover="showTip(event, 'fs74', 192)" class="i">replyCh</span> <span onmouseout="hideTip(event, 'fs75', 193)" onmouseover="showTip(event, 'fs75', 193)" class="i">abortAlt</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs72', 194)" onmouseover="showTip(event, 'fs72', 194)" class="i">queue</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs76', 195)" onmouseover="showTip(event, 'fs76', 195)" class="f">Enqueue</span> (<span onmouseout="hideTip(event, 'fs74', 196)" onmouseover="showTip(event, 'fs74', 196)" class="i">replyCh</span>,<span onmouseout="hideTip(event, 'fs75', 197)" onmouseover="showTip(event, 'fs75', 197)" class="i">abortAlt</span>)
+  <span onmouseout="hideTip(event, 'fs9', 198)" onmouseover="showTip(event, 'fs9', 198)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs77', 199)" onmouseover="showTip(event, 'fs77', 199)" class="f">unit</span> ()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs78', 200)" onmouseover="showTip(event, 'fs78', 200)" class="f">lockFree</span> (<span onmouseout="hideTip(event, 'fs79', 201)" onmouseover="showTip(event, 'fs79', 201)" class="i">locksDict</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs80', 202)" onmouseover="showTip(event, 'fs80', 202)" class="t">Dictionary</span><span class="o">&lt;</span>_,_<span class="o">&gt;</span>) <span onmouseout="hideTip(event, 'fs81', 203)" onmouseover="showTip(event, 'fs81', 203)" class="i">lock</span> <span onmouseout="hideTip(event, 'fs42', 204)" onmouseover="showTip(event, 'fs42', 204)" class="i">replyCh</span> <span onmouseout="hideTip(event, 'fs82', 205)" onmouseover="showTip(event, 'fs82', 205)" class="i">abortAlt</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs9', 206)" onmouseover="showTip(event, 'fs9', 206)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 207)" onmouseover="showTip(event, 'fs20', 207)" class="f">choose</span> [
+    <span onmouseout="hideTip(event, 'fs24', 208)" onmouseover="showTip(event, 'fs24', 208)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 209)" onmouseover="showTip(event, 'fs33', 209)" class="f">give</span> <span onmouseout="hideTip(event, 'fs42', 210)" onmouseover="showTip(event, 'fs42', 210)" class="i">replyCh</span> () <span class="o">^-&gt;</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs79', 211)" onmouseover="showTip(event, 'fs79', 211)" class="i">locksDict</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs83', 212)" onmouseover="showTip(event, 'fs83', 212)" class="f">Add</span> (<span onmouseout="hideTip(event, 'fs81', 213)" onmouseover="showTip(event, 'fs81', 213)" class="i">lock</span>, <span onmouseout="hideTip(event, 'fs73', 214)" onmouseover="showTip(event, 'fs73', 214)" class="t">Queue</span><span class="o">&lt;</span>_<span class="o">&gt;</span>())
+    <span onmouseout="hideTip(event, 'fs82', 215)" onmouseover="showTip(event, 'fs82', 215)" class="i">abortAlt</span> ]
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs84', 216)" onmouseover="showTip(event, 'fs84', 216)" class="i">releaseNoWaiting</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 217)" onmouseover="showTip(event, 'fs9', 217)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs77', 218)" onmouseover="showTip(event, 'fs77', 218)" class="f">unit</span> ()
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 219)" onmouseover="showTip(event, 'fs85', 219)" class="f">releaseWithWaiting</span> (<span onmouseout="hideTip(event, 'fs86', 220)" onmouseover="showTip(event, 'fs86', 220)" class="i">locksDict</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs80', 221)" onmouseover="showTip(event, 'fs80', 221)" class="t">Dictionary</span><span class="o">&lt;</span>_,_<span class="o">&gt;</span>) (<span onmouseout="hideTip(event, 'fs87', 222)" onmouseover="showTip(event, 'fs87', 222)" class="i">queue</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs73', 223)" onmouseover="showTip(event, 'fs73', 223)" class="t">Queue</span><span class="o">&lt;</span>_<span class="o">&gt;</span>) <span onmouseout="hideTip(event, 'fs81', 224)" onmouseover="showTip(event, 'fs81', 224)" class="i">lock</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs88', 225)" onmouseover="showTip(event, 'fs88', 225)" class="f">assign</span> () <span class="o">=</span>
+    <span class="k">if</span> <span onmouseout="hideTip(event, 'fs87', 226)" onmouseover="showTip(event, 'fs87', 226)" class="i">queue</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs89', 227)" onmouseover="showTip(event, 'fs89', 227)" class="i">Count</span> <span class="o">=</span> <span class="n">0</span> <span class="k">then</span>
+      <span onmouseout="hideTip(event, 'fs86', 228)" onmouseover="showTip(event, 'fs86', 228)" class="i">locksDict</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs90', 229)" onmouseover="showTip(event, 'fs90', 229)" class="f">Remove</span> <span onmouseout="hideTip(event, 'fs81', 230)" onmouseover="showTip(event, 'fs81', 230)" class="i">lock</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs91', 231)" onmouseover="showTip(event, 'fs91', 231)" class="f">ignore</span>
+      <span onmouseout="hideTip(event, 'fs9', 232)" onmouseover="showTip(event, 'fs9', 232)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs77', 233)" onmouseover="showTip(event, 'fs77', 233)" class="f">unit</span> ()
+    <span class="k">else</span>
+      <span class="k">let</span> (<span onmouseout="hideTip(event, 'fs92', 234)" onmouseover="showTip(event, 'fs92', 234)" class="i">replyCh</span>,<span onmouseout="hideTip(event, 'fs93', 235)" onmouseover="showTip(event, 'fs93', 235)" class="i">abortAlt</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs87', 236)" onmouseover="showTip(event, 'fs87', 236)" class="i">queue</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs94', 237)" onmouseover="showTip(event, 'fs94', 237)" class="f">Dequeue</span> ()
+      <span onmouseout="hideTip(event, 'fs9', 238)" onmouseover="showTip(event, 'fs9', 238)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 239)" onmouseover="showTip(event, 'fs20', 239)" class="f">choose</span> [
+        <span onmouseout="hideTip(event, 'fs24', 240)" onmouseover="showTip(event, 'fs24', 240)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 241)" onmouseover="showTip(event, 'fs33', 241)" class="f">give</span> <span onmouseout="hideTip(event, 'fs92', 242)" onmouseover="showTip(event, 'fs92', 242)" class="i">replyCh</span> ()
+        <span onmouseout="hideTip(event, 'fs93', 243)" onmouseover="showTip(event, 'fs93', 243)" class="i">abortAlt</span> <span class="o">^=&gt;</span> <span onmouseout="hideTip(event, 'fs88', 244)" onmouseover="showTip(event, 'fs88', 244)" class="f">assign</span> ]
+  <span onmouseout="hideTip(event, 'fs88', 245)" onmouseover="showTip(event, 'fs88', 245)" class="f">assign</span> ()
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Lock server</h3>
+
+<h4>Server</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs95', 246)" onmouseover="showTip(event, 'fs95', 246)" class="i">startLockServer</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 247)" onmouseover="showTip(event, 'fs15', 247)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs96', 248)" onmouseover="showTip(event, 'fs96', 248)" class="f">delay</span> <span class="o">&lt;|</span> <span class="k">fun</span> () <span class="k">-&gt;</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs97', 249)" onmouseover="showTip(event, 'fs97', 249)" class="i">locks</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs80', 250)" onmouseover="showTip(event, 'fs80', 250)" class="t">Dictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs36', 251)" onmouseover="showTip(event, 'fs36', 251)" class="t">int64</span>, <span onmouseout="hideTip(event, 'fs73', 252)" onmouseover="showTip(event, 'fs73', 252)" class="t">Queue</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 253)" onmouseover="showTip(event, 'fs24', 253)" class="t">Ch</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 254)" onmouseover="showTip(event, 'fs10', 254)" class="t">unit</span><span class="o">&gt;</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs9', 255)" onmouseover="showTip(event, 'fs9', 255)" class="t">Alt</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 256)" onmouseover="showTip(event, 'fs10', 256)" class="t">unit</span><span class="o">&gt;</span><span class="o">&gt;</span><span class="o">&gt;</span>()
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs64', 257)" onmouseover="showTip(event, 'fs64', 257)" class="i">s</span> <span class="o">=</span> { <span class="v">nextId</span> <span class="o">=</span> <span class="n">0L</span>; <span class="i">reqCh</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 258)" onmouseover="showTip(event, 'fs24', 258)" class="t">Ch</span> () }
+  <span onmouseout="hideTip(event, 'fs15', 259)" onmouseover="showTip(event, 'fs15', 259)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs98', 260)" onmouseover="showTip(event, 'fs98', 260)" class="f">foreverServer</span>
+    (<span onmouseout="hideTip(event, 'fs24', 261)" onmouseover="showTip(event, 'fs24', 261)" class="t">Ch</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 262)" onmouseover="showTip(event, 'fs44', 262)" class="f">take</span> <span onmouseout="hideTip(event, 'fs64', 263)" onmouseover="showTip(event, 'fs64', 263)" class="i">s</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 264)" onmouseover="showTip(event, 'fs62', 264)" class="i">reqCh</span> <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">=</span> <span class="k">function</span>
+      | <span onmouseout="hideTip(event, 'fs58', 265)" onmouseover="showTip(event, 'fs58', 265)" class="p">Acquire</span>(<span onmouseout="hideTip(event, 'fs99', 266)" onmouseover="showTip(event, 'fs99', 266)" class="i">lock</span>, <span onmouseout="hideTip(event, 'fs42', 267)" onmouseover="showTip(event, 'fs42', 267)" class="i">replyCh</span>, <span onmouseout="hideTip(event, 'fs82', 268)" onmouseover="showTip(event, 'fs82', 268)" class="i">abortAlt</span>) <span class="k">-&gt;</span>
+        <span class="k">match</span> <span onmouseout="hideTip(event, 'fs97', 269)" onmouseover="showTip(event, 'fs97', 269)" class="i">locks</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs100', 270)" onmouseover="showTip(event, 'fs100', 270)" class="f">TryGetValue</span> <span onmouseout="hideTip(event, 'fs99', 271)" onmouseover="showTip(event, 'fs99', 271)" class="i">lock</span> <span class="k">with</span>
+        | (<span class="k">true</span>, <span onmouseout="hideTip(event, 'fs101', 272)" onmouseover="showTip(event, 'fs101', 272)" class="i">pend</span>) <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs71', 273)" onmouseover="showTip(event, 'fs71', 273)" class="f">lockHeld</span> <span onmouseout="hideTip(event, 'fs101', 274)" onmouseover="showTip(event, 'fs101', 274)" class="i">pend</span> <span onmouseout="hideTip(event, 'fs42', 275)" onmouseover="showTip(event, 'fs42', 275)" class="i">replyCh</span> <span onmouseout="hideTip(event, 'fs82', 276)" onmouseover="showTip(event, 'fs82', 276)" class="i">abortAlt</span>
+        | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs78', 277)" onmouseover="showTip(event, 'fs78', 277)" class="f">lockFree</span> <span onmouseout="hideTip(event, 'fs97', 278)" onmouseover="showTip(event, 'fs97', 278)" class="i">locks</span> <span onmouseout="hideTip(event, 'fs99', 279)" onmouseover="showTip(event, 'fs99', 279)" class="i">lock</span> <span onmouseout="hideTip(event, 'fs42', 280)" onmouseover="showTip(event, 'fs42', 280)" class="i">replyCh</span> <span onmouseout="hideTip(event, 'fs82', 281)" onmouseover="showTip(event, 'fs82', 281)" class="i">abortAlt</span>
+      | <span onmouseout="hideTip(event, 'fs59', 282)" onmouseover="showTip(event, 'fs59', 282)" class="p">Release</span> <span onmouseout="hideTip(event, 'fs99', 283)" onmouseover="showTip(event, 'fs99', 283)" class="i">lock</span> <span class="k">-&gt;</span>
+        <span class="k">match</span> <span onmouseout="hideTip(event, 'fs97', 284)" onmouseover="showTip(event, 'fs97', 284)" class="i">locks</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs100', 285)" onmouseover="showTip(event, 'fs100', 285)" class="f">TryGetValue</span> <span onmouseout="hideTip(event, 'fs99', 286)" onmouseover="showTip(event, 'fs99', 286)" class="i">lock</span> <span class="k">with</span>
+        | (<span class="k">true</span>, <span onmouseout="hideTip(event, 'fs101', 287)" onmouseover="showTip(event, 'fs101', 287)" class="i">pend</span>) <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs85', 288)" onmouseover="showTip(event, 'fs85', 288)" class="f">releaseWithWaiting</span> <span onmouseout="hideTip(event, 'fs97', 289)" onmouseover="showTip(event, 'fs97', 289)" class="i">locks</span> <span onmouseout="hideTip(event, 'fs101', 290)" onmouseover="showTip(event, 'fs101', 290)" class="i">pend</span> <span onmouseout="hideTip(event, 'fs99', 291)" onmouseover="showTip(event, 'fs99', 291)" class="i">lock</span>
+        | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs84', 292)" onmouseover="showTip(event, 'fs84', 292)" class="i">releaseNoWaiting</span>)
+  <span class="o">&gt;</span><span class="o">&gt;</span><span class="o">-.</span> <span onmouseout="hideTip(event, 'fs64', 293)" onmouseover="showTip(event, 'fs64', 293)" class="i">s</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>Lock server</h3>
+
+<h4>Example</h4>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs102', 294)" onmouseover="showTip(event, 'fs102', 294)" class="f">withLock</span> (<span onmouseout="hideTip(event, 'fs64', 295)" onmouseover="showTip(event, 'fs64', 295)" class="i">s</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs60', 296)" onmouseover="showTip(event, 'fs60', 296)" class="t">LockServer</span>) (<span onmouseout="hideTip(event, 'fs103', 297)" onmouseover="showTip(event, 'fs103', 297)" class="i">l</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs56', 298)" onmouseover="showTip(event, 'fs56', 298)" class="t">Lock</span>) (<span onmouseout="hideTip(event, 'fs104', 299)" onmouseover="showTip(event, 'fs104', 299)" class="i">xJ</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs15', 300)" onmouseover="showTip(event, 'fs15', 300)" class="t">Job</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">x</span><span class="o">&gt;</span>) <span class="o">:</span> <span onmouseout="hideTip(event, 'fs9', 301)" onmouseover="showTip(event, 'fs9', 301)" class="t">Alt</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">x</span><span class="o">&gt;</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs69', 302)" onmouseover="showTip(event, 'fs69', 302)" class="f">acquire</span> <span onmouseout="hideTip(event, 'fs64', 303)" onmouseover="showTip(event, 'fs64', 303)" class="i">s</span> <span onmouseout="hideTip(event, 'fs103', 304)" onmouseover="showTip(event, 'fs103', 304)" class="i">l</span> <span class="o">^=&gt;</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs15', 305)" onmouseover="showTip(event, 'fs15', 305)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs105', 306)" onmouseover="showTip(event, 'fs105', 306)" class="f">tryFinallyJob</span> <span onmouseout="hideTip(event, 'fs104', 307)" onmouseover="showTip(event, 'fs104', 307)" class="i">xJ</span> (<span onmouseout="hideTip(event, 'fs67', 308)" onmouseover="showTip(event, 'fs67', 308)" class="f">release</span> <span onmouseout="hideTip(event, 'fs64', 309)" onmouseover="showTip(event, 'fs64', 309)" class="i">s</span> <span onmouseout="hideTip(event, 'fs103', 310)" onmouseover="showTip(event, 'fs103', 310)" class="i">l</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs106', 311)" onmouseover="showTip(event, 'fs106', 311)" class="i">lockSrv</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 312)" onmouseover="showTip(event, 'fs30', 312)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs95', 313)" onmouseover="showTip(event, 'fs95', 313)" class="i">startLockServer</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs107', 314)" onmouseover="showTip(event, 'fs107', 314)" class="f">withMyLock</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs102', 315)" onmouseover="showTip(event, 'fs102', 315)" class="f">withLock</span> <span onmouseout="hideTip(event, 'fs106', 316)" onmouseover="showTip(event, 'fs106', 316)" class="i">lockSrv</span> (<span onmouseout="hideTip(event, 'fs63', 317)" onmouseover="showTip(event, 'fs63', 317)" class="f">createLock</span> <span onmouseout="hideTip(event, 'fs106', 318)" onmouseover="showTip(event, 'fs106', 318)" class="i">lockSrv</span>)
+<span onmouseout="hideTip(event, 'fs30', 319)" onmouseover="showTip(event, 'fs30', 319)" class="f">run</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 320)" onmouseover="showTip(event, 'fs9', 320)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 321)" onmouseover="showTip(event, 'fs20', 321)" class="f">choose</span> [
+    <span onmouseout="hideTip(event, 'fs107', 322)" onmouseover="showTip(event, 'fs107', 322)" class="f">withMyLock</span> (<span onmouseout="hideTip(event, 'fs15', 323)" onmouseover="showTip(event, 'fs15', 323)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs96', 324)" onmouseover="showTip(event, 'fs96', 324)" class="f">delay</span> <span class="o">&lt;|</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs15', 325)" onmouseover="showTip(event, 'fs15', 325)" class="t">Job</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 326)" onmouseover="showTip(event, 'fs108', 326)" class="f">lift</span> <span onmouseout="hideTip(event, 'fs52', 327)" onmouseover="showTip(event, 'fs52', 327)" class="f">printfn</span> <span class="s">&quot;Hello&quot;</span>)
+    <span onmouseout="hideTip(event, 'fs109', 328)" onmouseover="showTip(event, 'fs109', 328)" class="f">timeOutMillis</span> <span class="n">50</span> <span class="o">^-&gt;</span> <span class="k">fun</span> () <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs52', 329)" onmouseover="showTip(event, 'fs52', 329)" class="f">printfn</span> <span class="s">&quot;Timed Out&quot;</span> ]
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Marcus Griep" description="Introduction to Hopac and Synchronous Rendezvous" theme="Moon" title="Hopac - Alternatives: How do they work?" transition="dissolve">
+
+<h3>On Fairness and Determinism</h3>
+
+<p>Concurrent ML emphasizes <em>fairness</em> and <em>non-determinism</em></p>
+
+<p>Hopac emphasizes <em>performance</em> and <em>co-operation</em></p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs9', 330)" onmouseover="showTip(event, 'fs9', 330)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 331)" onmouseover="showTip(event, 'fs20', 331)" class="f">choose</span>
+  [ <span onmouseout="hideTip(event, 'fs9', 332)" onmouseover="showTip(event, 'fs9', 332)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs110', 333)" onmouseover="showTip(event, 'fs110', 333)" class="f">prepareFun</span> <span class="o">&lt;|</span> <span class="k">fun</span> () <span class="k">-&gt;</span> (<span onmouseout="hideTip(event, 'fs52', 334)" onmouseover="showTip(event, 'fs52', 334)" class="f">printfn</span> <span class="s">&quot;A&quot;</span> ; <span onmouseout="hideTip(event, 'fs9', 335)" onmouseover="showTip(event, 'fs9', 335)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 336)" onmouseover="showTip(event, 'fs54', 336)" class="f">always</span> <span class="n">1</span>)
+    <span onmouseout="hideTip(event, 'fs9', 337)" onmouseover="showTip(event, 'fs9', 337)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs110', 338)" onmouseover="showTip(event, 'fs110', 338)" class="f">prepareFun</span> <span class="o">&lt;|</span> <span class="k">fun</span> () <span class="k">-&gt;</span> (<span onmouseout="hideTip(event, 'fs52', 339)" onmouseover="showTip(event, 'fs52', 339)" class="f">printfn</span> <span class="s">&quot;B&quot;</span> ; <span onmouseout="hideTip(event, 'fs9', 340)" onmouseover="showTip(event, 'fs9', 340)" class="t">Alt</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 341)" onmouseover="showTip(event, 'fs54', 341)" class="f">always</span> <span class="n">2</span>) ]
+</code></pre></td>
+</tr>
+</table>
+
+<p>Concurrent ML would print "A" &amp; "B"</p>
+
+<p>Hopac prints</p>
+
+<table class="pre"><tr><td><pre><code></code></pre></td></tr></table>
+
+<p>Concurrent ML evaluates alternatives <em>eagerly</em></p>
+
+<p>Hopac evaluates <em>lazily</em></p>
+
+</section>
+
+</section>
+
+<section >
+
+<h3><a href="index.html">Agenda</a></h3>
+
+<ol>
+<li><a href="concurrency.html">Concurrency</a></li>
+<li><a href="hopac.html">Hopac</a></li>
+<li><a href="alternatives.html">Alternatives</a>
+<ul>
+<li><a href="fibonacci.html">Fibonacci Sequence</a></li>
+<li><a href="altDeepDive.html">How do they work?</a></li>
+</ul></li>
+<li><span class="nextsegment"><a href="remainder.html">IVar, MVar, Mailbox...</a></span></li>
+</ol>
+
+</section>
+
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'dissolve', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+
